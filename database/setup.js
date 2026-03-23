@@ -10,71 +10,35 @@ const db = new Sequelize({
 
 // User Model
 const User = db.define('User', {
-    id: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
-        autoIncrement: true
-    },
-    name: {
-        type: DataTypes.STRING,
-        allowNull: false
-    },
-    email: {
+    id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+    name: { type: DataTypes.STRING, allowNull: false },
+    email: { type: DataTypes.STRING, allowNull: false, unique: true },
+    password: { type: DataTypes.STRING, allowNull: false },
+    role: {
         type: DataTypes.STRING,
         allowNull: false,
-        unique: true
-    },
-    password: {
-        type: DataTypes.STRING,
-        allowNull: false
-    },
-    // TODO: Add role field (employee, manager, admin)
+        defaultValue: 'employee',
+        validate: {
+            isIn: [['employee', 'manager', 'admin']]
+        }
+    }
 });
 
 // Project Model
 const Project = db.define('Project', {
-    id: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
-        autoIncrement: true
-    },
-    name: {
-        type: DataTypes.STRING,
-        allowNull: false
-    },
-    description: {
-        type: DataTypes.TEXT,
-        allowNull: true
-    },
-    status: {
-        type: DataTypes.STRING,
-        defaultValue: 'active'
-    }
+    id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+    name: { type: DataTypes.STRING, allowNull: false },
+    description: { type: DataTypes.TEXT, allowNull: true },
+    status: { type: DataTypes.STRING, defaultValue: 'active' }
 });
 
 // Task Model
 const Task = db.define('Task', {
-    id: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
-        autoIncrement: true
-    },
-    title: {
-        type: DataTypes.STRING,
-        allowNull: false
-    },
-    description: {
-        type: DataTypes.TEXT,
-        allowNull: true
-    },
-    status: {
-        type: DataTypes.STRING,
-        defaultValue: 'pending'
-    },
-    priority: {
-        type: DataTypes.STRING,
-        defaultValue: 'medium'
-    }
+    id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+    title: { type: DataTypes.STRING, allowNull: false },
+    description: { type: DataTypes.TEXT, allowNull: true },
+    status: { type: DataTypes.STRING, defaultValue: 'pending' },
+    priority: { type: DataTypes.STRING, defaultValue: 'medium' }
 });
 
 // Define Relationships
@@ -92,7 +56,6 @@ async function initializeDatabase() {
     try {
         await db.authenticate();
         console.log('Database connection established successfully.');
-        
         await db.sync({ force: false });
         console.log('Database synchronized successfully.');
     } catch (error) {
